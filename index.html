@@ -42,7 +42,7 @@ async function dropboxUpload(path,contents){const token=dbxToken();if(!token)thr
 window.addEventListener('DOMContentLoaded',()=>{handleDropboxCallback().catch(e=>{console.error(e);alert('Erreur connexion Dropbox : '+e.message);updateDropboxUI()});updateDropboxUI()});
 
 const steps=[
-{title:'Installation',choices:[['healthBook','Présentation du fichier / carnet sanitaire',['Oui','Non']]],fields:[['owner','Propriétaire'],['phone','Téléphone','tel'],['email','Mail','email'],['ownerAddress','Adresse du propriétaire'],['siteAddress','Adresse de pose du disconnecteur'],['network','Le BA protège du retour d’un réseau de'],['place','Lieu de pose']]},
+{title:'Installation',choices:[['healthBook','Présentation du fichier / carnet sanitaire',['Oui','Non']],['waterTreatment','Présence d’un traitement d’eau',['Amont','Aval','Non connu']],['networkComm','Réseau aval en communication avec une autre source d’eau',['Oui','Non','Non connu']]],fields:[['owner','Propriétaire'],['phone','Téléphone','tel'],['email','Mail','email'],['ownerAddress','Adresse du propriétaire'],['siteAddress','Adresse de pose du disconnecteur'],['network','Le BA protège du retour d’un réseau de'],['place','Lieu de pose'],['waterTreatmentWhich','Si traitement d’eau : lequel ?'],['networkCommWhich','Si oui : laquelle ?'],['highestPoint','Hauteur du point le plus élevé du réseau aval']]},
 {title:'Identification du disconnecteur',choices:[['norm','Norme',['43 010','12729']],['logoNF','Logo NF',['Oui','Non']],['markingOk','Marquage conforme',['Oui','Non']]],fields:[['brand','Marque'],['type','Type'],['diameter','Diamètre'],['serial','N° de série'],['idObs','Observations','textarea']]},
 {title:'Conformité du local',choices:[['access','Accès facile',['Oui','Non']],['clearance','Dégagement autour du BA',['Bon','Insuffisant']],['immersion','Risque d’immersion de la décharge',['Oui','Non']],['freeze','Risque de gel',['Oui','Non']],['ventilation','Aération du local',['Bon','Insuffisant']],['localOk','Local conforme',['Oui','Non']]],fields:[['evac','Mode d’évacuation des eaux'],['localObs','Observations','textarea']]},
 {title:'Règles de pose',choices:[['surface','État de surface du disconnecteur',['Bon','Mauvais']],['orientation','Pose du disconnecteur',['Horizontale','Verticale']],['chargeBreak','Rupture de charge installée',['Oui','Non']],['upValve','Vanne amont posée',['Oui','Non']],['filter','Filtre posé',['Oui','Non']],['rinse','Avec robinet rinçage',['Oui','Non']],['downValve','Vanne aval posée',['Oui','Non']],['testPorts','Prises d’essais conformes',['Oui','Non']],['drainOk','Raccordement et évacuation conforme',['Oui','Non']],['installOk','Ensemble de protection posé conforme',['Oui','Non']]],fields:[['height','Hauteur au sol de la décharge (cm)','number'],['poseObs','Observations','textarea']]},
@@ -111,6 +111,7 @@ async function buildEditablePdfBytes(){
   text('Adresse du propriétaire',val('ownerAddress')); text('Adresse de pose du disconnecteur',val('siteAddress'));
   text('IDENTIFICATION DU DISCONNECTEUR  Marque',val('brand')); text('Type',val('type')); text('Diamètre',val('diameter')); text('N de série',val('serial')); text('Observations',val('idObs'));
   text('INSTALLATION    Le BA protège dun réseau de',val('network')); text('Lieu de pose',val('place'));
+  text('si oui lequel',val('waterTreatmentWhich')); text('si oui laquelle',val('networkCommWhich')); text('Point le plus élevé',val('highestPoint'));
   text('Mode dévacuation des eaux du local siphon relevage',val('evac')); text('Observations_3',val('localObs'));
   text('Hauteur au sol de la décharge min 50 cm',val('height')); text('Etat de surface',val('surface'));
   // infos opérateur/appareillage conservées mais réappliquées
@@ -122,6 +123,8 @@ async function buildEditablePdfBytes(){
   radioWidget('Group3', data.logoNF==='Oui'?0:data.logoNF==='Non'?1:null);
   radioWidget('Group4', data.markingOk==='Oui'?0:data.markingOk==='Non'?1:null);
   radioWidget('Group5', data.norm==='43 010'?1:data.norm==='12729'?0:null);
+  radioWidget('Group6', data.waterTreatment==='Amont'?0:data.waterTreatment==='Aval'?1:data.waterTreatment==='Non connu'?2:null);
+  radioWidget('Group7', data.networkComm==='Oui'?0:data.networkComm==='Non'?1:data.networkComm==='Non connu'?2:null);
   radioWidget('Group9', data.access==='Oui'?0:data.access==='Non'?1:null);
   radioWidget('Group11', data.clearance==='Bon'?0:data.clearance==='Insuffisant'?1:null);
   radioWidget('Group8', data.immersion==='Oui'?1:data.immersion==='Non'?0:null);
